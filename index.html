@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scritch-like Environment</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+
+        /* Header styling */
+        .header {
+            background-color: #4caf50;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Toolbox for draggable blocks */
+        .toolbox {
+            border: 2px solid #4caf50;
+            background-color: #e0f7e0;
+            padding: 20px;
+            margin: 20px;
+            display: inline-block;
+        }
+
+        /* Workspace area for dropping blocks */
+        .workspace {
+            border: 2px dashed #4caf50;
+            background-color: #ffffff;
+            width: 300px;
+            height: 300px;
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        /* Block style */
+        .block {
+            background-color: #ffeb3b;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 5px;
+            cursor: grab;
+        }
+
+        /* Output area for program results */
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+            background-color: #e0f7e0;
+            border: 2px solid #4caf50;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Scritch-like Block Programming</h1>
+    </div>
+
+    <!-- Block toolbox -->
+    <div class="toolbox">
+        <h2>Blocks</h2>
+        <div class="block" draggable="true" id="move-block">Move 10 Steps</div>
+        <div class="block" draggable="true" id="turn-block">Turn 15 Degrees</div>
+    </div>
+
+    <!-- Workspace for dropping blocks -->
+    <div class="workspace" id="workspace">
+        <h2>Workspace</h2>
+        <p>Drag blocks here</p>
+    </div>
+
+    <!-- Button to run the code -->
+    <button id="run-code">Run Code</button>
+
+    <!-- Output area to display the results -->
+    <div class="output">
+        <h2>Output</h2>
+        <div id="output-text">Program output will appear here.</div>
+    </div>
+
+    <script>
+        // Add drag-and-drop functionality
+        const blocks = document.querySelectorAll('.block');
+        const workspace = document.getElementById('workspace');
+        const output = document.getElementById('output-text');
+
+        // Allow blocks to be dragged
+        blocks.forEach(block => {
+            block.addEventListener('dragstart', dragStart);
+        });
+
+        // Prevent default behavior for dragover
+        workspace.addEventListener('dragover', dragOver);
+
+        // Allow blocks to be dropped in the workspace
+        workspace.addEventListener('drop', drop);
+
+        let code = [];
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const blockId = e.dataTransfer.getData('text/plain');
+            const block = document.getElementById(blockId);
+            const clone = block.cloneNode(true);
+            workspace.appendChild(clone);
+
+            // Add block to the code array
+            code.push(blockId);
+        }
+
+        // Run the "code" when the button is clicked
+        document.getElementById('run-code').addEventListener('click', () => {
+            let result = '';
+            code.forEach(blockId => {
+                if (blockId === 'move-block') {
+                    result += 'Moved 10 steps. ';
+                } else if (blockId === 'turn-block') {
+                    result += 'Turned 15 degrees. ';
+                }
+            });
+            output.textContent = result || 'No blocks in workspace.';
+        });
+    </script>
+</body>
+</html>
